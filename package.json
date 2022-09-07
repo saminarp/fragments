@@ -4,12 +4,12 @@
   "description": "Fragments back-end API",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --config .eslintrc.js src/**"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saminarp/fragments.git",
-    "lint": "eslint --config .eslintrc.js src/**"
+    "url": "git+https://github.com/saminarp/fragments.git"    
   },
   "keywords": [],
   "author": "Samina Rahman Purba",
@@ -23,8 +23,13 @@
     "prettier": "2.7.1"
   },
   "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "helmet": "^6.0.0",
     "pino": "^8.5.0",
     "pino-http": "^8.2.0",
-    "pino-pretty": "^9.1.0"
+    "pino-pretty": "^9.1.0",
+    "stoppable": "^1.1.0"
   }
 }
