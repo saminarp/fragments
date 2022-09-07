@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/saminarp/fragments/issues"
   },
-  "homepage": "https://github.com/saminarp/fragments#readme"
+  "homepage": "https://github.com/saminarp/fragments#readme",
+  "devDependencies": {
+    "prettier": "2.7.1"
+  }
 }
