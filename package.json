@@ -8,7 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saminarp/fragments.git"
+    "url": "git+https://github.com/saminarp/fragments.git",
+    "lint": "eslint --config .eslintrc.js src/**"
   },
   "keywords": [],
   "author": "Samina Rahman Purba",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/saminarp/fragments#readme",
   "devDependencies": {
+    "eslint": "^8.23.0",
     "prettier": "2.7.1"
   }
 }
