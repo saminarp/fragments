@@ -9,6 +9,8 @@ const pino = require('pino-http')({
   // Use our default logger instance, which is already configured
   logger,
 });
+const passport = require('passport');
+const authorization = require('./authorization');
 
 // Create an express app instance we can use to attach middleware and HTTP routes
 const app = express();
@@ -24,24 +26,9 @@ app.use(cors());
 
 // Use gzip/deflate compression middleware
 app.use(compression());
-
-/* // Define a simple health check route. If the server is running
-// we'll respond with a 200 OK.  If not, the server isn't healthy.
-app.get('/', (req, res) => {
-  // Clients shouldn't cache this response (always request it fresh)
-  // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
-  res.setHeader('Cache-Control', 'no-cache');
-
-  // Send a 200 'OK' response with info about our repo
-  res.status(200).json({
-    status: 'ok',
-    author,
-    // TODO: change this to use your GitHub username
-    githubUrl: 'https://github.com/saminarp/fragments',
-    version,
-  });
-});
- */
+// Set up our passport authorization middleware
+passport.use(authorization.strategy());
+app.use(passport.initialize());
 // Define our routes
 app.use('/', require('./routes'));
 // Add 404 middleware to handle any requests for resources that can't be found
