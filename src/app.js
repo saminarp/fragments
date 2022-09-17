@@ -4,10 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
-
-// version and author from our package.json file
-const { version, author } = require('../package.json');
-
 const logger = require('./logger');
 const pino = require('pino-http')({
   // Use our default logger instance, which is already configured
@@ -29,7 +25,7 @@ app.use(cors());
 // Use gzip/deflate compression middleware
 app.use(compression());
 
-// Define a simple health check route. If the server is running
+/* // Define a simple health check route. If the server is running
 // we'll respond with a 200 OK.  If not, the server isn't healthy.
 app.get('/', (req, res) => {
   // Clients shouldn't cache this response (always request it fresh)
@@ -45,7 +41,9 @@ app.get('/', (req, res) => {
     version,
   });
 });
-
+ */
+// Define our routes
+app.use('/', require('./routes'));
 // Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
   res.status(404).json({
