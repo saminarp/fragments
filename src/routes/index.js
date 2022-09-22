@@ -8,7 +8,7 @@ const { version, author } = require('../../package.json');
 // Create a router that we can use to mount our API
 const router = express.Router();
 // authorization middleware
-const { authenticate } = require('../authentication');
+const { authenticate } = require('../authorization/index');
 /**
  * Expose all of our API routes on /v1/* to include an API version.
  */
