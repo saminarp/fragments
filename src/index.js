@@ -2,7 +2,6 @@
 
 // Read environment variables from an .env file (if present)
 require('dotenv').config();
-const unneededVariable = 'This variable is never used';
 
 // We want to log any crash cases so we can debug later from logs.
 const logger = require('./logger');
