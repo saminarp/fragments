@@ -10,7 +10,7 @@ const pino = require('pino-http')({
   logger,
 });
 const passport = require('passport');
-const authorization = require('./authorization');
+const authorization = require('./authentication');
 
 // Create an express app instance we can use to attach middleware and HTTP routes
 const app = express();

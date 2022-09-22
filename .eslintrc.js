@@ -4,6 +4,7 @@ module.exports = {
     commonjs: true,
     es2021: true,
     node: true,
+    jest: true,
   },
   extends: 'eslint:recommended',
   overrides: [],
@@ -11,4 +12,5 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {},
+  
 };
