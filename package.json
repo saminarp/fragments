@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/saminarp/fragments/issues"
   },
-  "homepage": "https://github.com/saminarp/fragments#readme",
+  "githubUrl": "https://github.com/saminarp/fragments#readme",
   "devDependencies": {
     "dotenv": "^16.0.2",
     "eslint": "^8.23.0",
