@@ -52,4 +52,14 @@ describe('POST /v1/fragment', () => {
       .send('new fragment');
     expect(res.status).toBe(401);
   });
+
+  test('Invalid credentials', async () => {
+    const res = await request(app)
+      .post('/v1/fragments')
+      .set('Content-Type', 'text/plain')
+      .auth('failme', 'failme')
+      .send('new fragment');
+
+    expect(res.status).toBe(401);
+  });
 });
