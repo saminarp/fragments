@@ -15,24 +15,22 @@ describe('POST /v1/fragment', () => {
     expect(res.status).toBe(201);
   });
 
-  test('Created fragment should proper data', async () => {
+  test('Created fragment should have proper data(id, ownerId, dates, type, size)', async () => {
     const res = await request(app)
       .post('/v1/fragments')
       .set('Content-Type', 'text/plain')
       .auth('user1@email.com', 'password1')
       .send('new fragment');
-
-    console.log(res.body.id);
     //ID
     expect(res.body.fragment.id).toMatch(UUID);
-    //TODO: owner ID needs to be hashed email
-    //expect(res.body.ownerId).toMatch(/^[0-9a-f]{32}$/);
+    //owner ID
+    expect(res.body.fragment.ownerId).toMatch(/^[0-9a-f]{64}$/);
     //create and updated should be ISO Date strings
     expect(res.body.fragment.created && res.body.fragment.updated).toMatch(fragmentDate);
     //type should be text/plain
     expect(res.body.fragment.type).toBe('text/plain');
     // size
-    expect(res.body.fragment.size).toBe(12);
+    expect(res.body.fragment.size).toBe(Buffer.byteLength('new fragment'));
   });
 
   test('Location URL must be present in header and match the fragment ID', async () => {
