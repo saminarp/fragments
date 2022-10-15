@@ -31,37 +31,21 @@ describe('GET /v1/fragments', () => {
     const getRes = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
 
     expect(getRes.status).toBe(200);
-    expect(getRes.body.fragment).toContain(id);
-    expect(getRes.body).toEqual({ status: 'ok', fragment: [id] });
-    expect(getRes.body.fragment[0]).toMatch(UUID);
+    expect(getRes.body.fragments).toContain(id);
+    expect(getRes.body).toEqual({ status: 'ok', fragments: [id] });
+    expect(getRes.body.fragments[0]).toMatch(UUID);
   });
-});
 
-describe('GET /v1/fragments/:id', () => {
-  test('Valid fragment id should return data, type and size', async () => {
-    const postRes = await request(app)
+  test('returned fragment metadata if correct id', async () => {
+    const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
-      .send('new fragment');
-
-    const id = postRes.body.fragment.id;
+      .send('fragment');
+    const id = JSON.parse(res.text).fragment.id;
     const getRes = await request(app)
       .get(`/v1/fragments/${id}`)
       .auth('user1@email.com', 'password1');
-
-    expect(getRes.body).toEqual({
-      status: 'ok', //200
-      data: 'new fragment',
-      type: 'text/plain',
-      size: Buffer.byteLength('new fragment'), // 12
-    });
-
-    expect(getRes.body.size).toBe(Number(getRes.body.size));
-  });
-  test('Unauthorized acess to fragment', () => request(app).get('/v1/fragments/1').expect(401));
-
-  test('Invalid Fragment ID', () => {
-    return request(app).get('/v1/fragments/1').auth('user1@email.com', 'password1').expect(404);
+    expect(getRes.status).toBe(200);
   });
 });

@@ -55,7 +55,7 @@ class Fragment {
   static async byUser(ownerId, expand = false) {
     const ids = await listFragments(ownerId);
     if (expand) return Promise.all(ids.map((id) => Fragment.byId(ownerId, id)));
-    else return listFragments(ownerId);
+    else return ids;
   }
 
   /**
