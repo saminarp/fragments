@@ -1,39 +1,35 @@
 # The Dockerfile is a blueprint for creating a Docker image. It contains a set of instructions that Docker will execute one by one.
 
-# Use node version 16.15.1
-FROM node:16.15.1
+
+##### Stage 1 - the build environment #####
+FROM node:16.15.1-alpine3.15 AS build
 
 LABEL maintainer="Samina Rahman Purba <srpurba@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
-# We default to use port 8080 in our service
-ENV PORT=8080
+ENV NODE_ENV=production
 
-# Reduce npm spam when installing within Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
-ENV NPM_CONFIG_LOGLEVEL=warn
-
-# Disable colour when run inside Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#color
-ENV NPM_CONFIG_COLOR=false
-
-# Use /app as our working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files into the working dir (/app)
 COPY package.json package-lock.json ./
 
-# Install node dependencies defined in package-lock.json
-RUN npm install
+RUN npm ci
 
-# Copy src to /app/src/
-COPY ./src ./src
 
-# Copy our HTPASSWD file
-COPY ./tests/.htpasswd ./tests/.htpasswd
+######## Stage 2 - the production environment ########
 
-# Start the container by running our server
-CMD npm start
+FROM node:16.15.1-alpine3.15
 
-# We run our service on port 8080
-EXPOSE 8080 
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+COPY --from=build /app /app/
+
+COPY package.json package-lock.json ./
+
+RUN npm ci --only=production
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
