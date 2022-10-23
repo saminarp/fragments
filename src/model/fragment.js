@@ -15,6 +15,9 @@ const {
 } = require('./data');
 const validTypes = [
   `text/plain`,
+  `text/markdown`,
+  `text/html`,
+  `application/json`,
   /*
    Currently, only text/plain is supported. Others will be added later.
 
@@ -130,7 +133,23 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    return validTypes.filter((type) => type.startsWith(this.mimeType));
+    //return validTypes.filter((type) => type.startsWith(this.mimeType));
+    if (this.type === 'text/plain') return 'text/plain';
+    else if (this.type === 'text/markdown') return 'text/markdown';
+    else if (this.type === 'text/html') return 'text/html';
+    else if (this.type === 'application/json') return 'application/json';
+    else return '';
+    // if (this.type.includes('text/plain')) {
+    //   return ['text/plain'];
+    // } else if (this.type.includes('text/markdown')) {
+    //   return ['text/markdown'];
+    // } else if (this.type.includes('text/html')) {
+    //   return ['text/html'];
+    // } else if (this.type.includes('application/json')) {
+    //   return ['application/json'];
+    // } else {
+    //   return [];
+    // }
   }
 
   /**
