@@ -13,6 +13,7 @@ const {
   listFragments,
   deleteFragment,
 } = require('./data');
+
 const validTypes = [
   `text/plain`,
   `text/markdown`,
@@ -139,17 +140,6 @@ class Fragment {
     else if (this.type === 'text/html') return 'text/html';
     else if (this.type === 'application/json') return 'application/json';
     else return '';
-    // if (this.type.includes('text/plain')) {
-    //   return ['text/plain'];
-    // } else if (this.type.includes('text/markdown')) {
-    //   return ['text/markdown'];
-    // } else if (this.type.includes('text/html')) {
-    //   return ['text/html'];
-    // } else if (this.type.includes('application/json')) {
-    //   return ['application/json'];
-    // } else {
-    //   return [];
-    // }
   }
 
   /**

@@ -25,11 +25,13 @@ const rawBody = () =>
   });
 
 // Define our first route, which will be: GET /v1/fragments
+// GET routes
 router.get('/fragments', require('./get'));
-
 router.get('/fragments/:id', require('./get-by-id'));
+
 // Other routes will go here later on...
 
+// POST routes
 // Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
 router.post('/fragments', rawBody(), require('./post'));
 
