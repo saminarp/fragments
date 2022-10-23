@@ -7,7 +7,7 @@ const logger = require('../../logger');
  */
 module.exports = async (req, res) => {
   try {
-    const fragments = await Fragment.byUser(req.user, false);
+    const fragments = await Fragment.byUser(req.user, req.query.expand);
     logger.info('GET request for fragments data: ', { user: req.user, fragments });
     res.status(200).json(createSuccessResponse({ fragments }));
   } catch (error) {
