@@ -28,7 +28,7 @@ const rawBody = () =>
 // GET routes
 router.get('/fragments', require('./get'));
 router.get('/fragments/:id', require('./get-by-id'));
-
+router.get('/fragments/:id/info', require('./get-id-info'));
 // Other routes will go here later on...
 
 // POST routes
