@@ -3,10 +3,10 @@
 # Stage 1 - the build environment
 ################################################
 
-FROM node:16.15.1-alpine3.14@sha256:889139aa824c8b9dd29938eecfd300d51fc2e984f9cd03df391bcfbe9cf10b53 AS build
+FROM node:16.15.1-alpine3.15 AS build
 
-LABEL maintainer="Samina Rahman Purba <srpurba@myseneca.ca>"
-LABEL description="Fragments node.js microservice"
+LABEL maintainer="Samina Rahman Purba <srpurba@myseneca.ca>"\
+      description="Fragments node.js microservice"
 
 ENV NODE_ENV=production
 ENV NPM_CONFIG_LOGLEVEL=warn
@@ -16,19 +16,24 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm ci --only=production 
 ################################################
 
 # Stage 2 - the production environment
 ################################################
 
-FROM node:16.15.1-alpine3.14@sha256:889139aa824c8b9dd29938eecfd300d51fc2e984f9cd03df391bcfbe9cf10b53 AS production
+FROM node:16.15.1-alpine3.15 AS production
 
 WORKDIR /app
 
 COPY --from=build /app /app/
 COPY ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
+
+RUN apk --update --no-cache add curl=7.80.0-r4 \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
 
 CMD ["npm", "start"]
 
