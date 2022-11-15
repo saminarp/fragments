@@ -160,13 +160,14 @@ describe('Fragment class', () => {
   });
 
   describe('formats', () => {
-    test('formats returns the expected result for plain text', () => {
+    test('formats returns expected results', () => {
+      // Text fragment
       const fragment = new Fragment({
         ownerId: '1234',
-        type: 'text/plain',
+        type: 'text/plain; charset=utf-8',
         size: 0,
       });
-      expect(fragment.formats).toEqual('text/plain');
+      expect(fragment.formats).toEqual(['.txt']);
     });
   });
 
