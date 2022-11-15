@@ -21,8 +21,6 @@ module.exports = async (req, res) => {
       default: {
         // extension specified, proceed to convert to the specified format
         const { convertedData, mimeType } = await fragment.convertedData(ext);
-        if (!fragment.formats.includes(ext))
-          return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
 
         logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
         res.set('Content-Type', mimeType);
@@ -32,6 +30,6 @@ module.exports = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    return res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
+    return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
   }
 };

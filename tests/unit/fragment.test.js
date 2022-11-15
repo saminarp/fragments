@@ -9,9 +9,6 @@ const validTypes = [
   `text/html`,
   `application/json`,
   /*
-   Currently, only text/plain is supported. Others will be added later.
-
-
   `image/png`,
   `image/jpeg`,
   `image/webp`,

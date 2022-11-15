@@ -121,7 +121,7 @@ class Fragment {
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
     if (this.mimeType === 'application/json') return ['.json', '.txt'];
-    return '';
+    return [];
   }
 
   /**
