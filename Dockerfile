@@ -3,7 +3,7 @@
 # Stage 1 - the build environment
 ################################################
 
-FROM node:16.15.1-alpine3.15 AS build
+FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS build
 
 LABEL maintainer="Samina Rahman Purba <srpurba@myseneca.ca>"\
       description="Fragments node.js microservice"
@@ -22,7 +22,7 @@ RUN npm ci --only=production
 # Stage 2 - the production environment
 ################################################
 
-FROM node:16.15.1-alpine3.15 AS production
+FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS production
 
 WORKDIR /app
 
