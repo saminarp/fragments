@@ -121,7 +121,7 @@ class Fragment {
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
     if (this.mimeType === 'application/json') return ['.json', '.txt'];
-    return [];
+    return '';
   }
 
   /**
@@ -141,7 +141,7 @@ class Fragment {
    * @throws {Error} if the extension is not supported
    * @throws {Error} if the fragment's data cannot be converted to the given extension
    */
-  async convertor(extension) {
+  async convertedData(extension) {
     let mimeType, convertedData;
 
     if (this.mimeType === 'text/markdown') {
@@ -184,7 +184,7 @@ class Fragment {
     if (this.mimeType === 'application/json') {
       switch (extension) {
         case '.txt':
-          convertedData = JSON.stringify(await this.getData(), null, 2);
+          convertedData = (await this.getData()).toString();
           mimeType = 'text/plain';
           break;
         default:

@@ -159,6 +159,16 @@ describe('Fragment class', () => {
     });
   });
 
+  /* 
+  get formats() {
+    if (this.mimeType === 'text/plain') return ['.txt'];
+    if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
+    if (this.mimeType === 'text/html') return ['.html', '.txt'];
+    if (this.mimeType === 'application/json') return ['.json', '.txt'];
+    return [];
+  }  
+  */
+
   describe('formats', () => {
     test('formats returns expected results', () => {
       // Text fragment
@@ -168,6 +178,27 @@ describe('Fragment class', () => {
         size: 0,
       });
       expect(fragment.formats).toEqual(['.txt']);
+
+      const fragment2 = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment2.formats).toEqual(['.md', '.html', '.txt']);
+
+      const fragment3 = new Fragment({
+        ownerId: '1234',
+        type: 'text/html; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment3.formats).toEqual(['.html', '.txt']);
+
+      const fragment4 = new Fragment({
+        ownerId: '1234',
+        type: 'application/json; charset=utf-8',
+        size: 0,
+      });
+      expect(fragment4.formats).toEqual(['.json', '.txt']);
     });
   });
 
@@ -253,6 +284,142 @@ describe('Fragment class', () => {
 
       await Fragment.delete('1234', fragment.id);
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
+    });
+  });
+  /* 
+  async convertor(extension) {
+    let mimeType, convertedData;
+
+    if (this.mimeType === 'text/markdown') {
+      switch (extension) {
+        case '.html': {
+          const rawData = await this.getData();
+          convertedData = md.render(rawData.toString());
+          mimeType = 'text/html';
+          break;
+        }
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+    if (this.mimeType === 'text/html') {
+      switch (extension) {
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+    if (this.mimeType === 'text/plain') {
+      switch (extension) {
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+
+    if (this.mimeType === 'application/json') {
+      switch (extension) {
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+    return { convertedData, mimeType };
+  }  
+  */
+  describe('convertedData(extension)', () => {
+    test('converts markdown to html', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# Hello'));
+      const { convertedData, mimeType } = await fragment.convertedData('.html');
+      expect(convertedData).toBe('<h1>Hello</h1>\n');
+      expect(mimeType).toBe('text/html');
+    });
+
+    test('converts markdown to text', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# Hello'));
+      const { convertedData, mimeType } = await fragment.convertedData('.txt');
+      expect(convertedData).toBe('# Hello');
+      expect(mimeType).toBe('text/plain');
+      expect(mimeType).not.toBe('text/markdown');
+    });
+
+    test('converts html to text', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/html',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('<h1>Hello</h1>'));
+      const { convertedData, mimeType } = await fragment.convertedData('.txt');
+      expect(convertedData).toBe('<h1>Hello</h1>');
+      expect(mimeType).toBe('text/plain');
+      expect(() => fragment.convertedData('.html')).rejects.toThrow();
+    });
+
+    test('converts txt to text', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/plain',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('Hello'));
+      const { convertedData, mimeType } = await fragment.convertedData('.txt');
+      expect(convertedData).toBe('Hello');
+      expect(mimeType).toBe('text/plain');
+      expect(() => fragment.convertedData('.html')).rejects.toThrow();
+    });
+
+    test('converts json to text', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'application/json',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('{"a":1}'));
+      const { convertedData, mimeType } = await fragment.convertedData('.txt');
+      expect(convertedData).toBe('{"a":1}');
+      expect(mimeType).toBe('text/plain');
+      expect(() => fragment.convertedData('.html')).rejects.toThrow();
+    });
+
+    //test throws error if extension is not supported
+    test('throws error if extension is not supported', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# Hello'));
+      expect(() => fragment.convertedData('.jpg')).rejects.toThrow();
     });
   });
 });
