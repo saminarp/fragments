@@ -286,60 +286,7 @@ describe('Fragment class', () => {
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
     });
   });
-  /* 
-  async convertor(extension) {
-    let mimeType, convertedData;
 
-    if (this.mimeType === 'text/markdown') {
-      switch (extension) {
-        case '.html': {
-          const rawData = await this.getData();
-          convertedData = md.render(rawData.toString());
-          mimeType = 'text/html';
-          break;
-        }
-        case '.txt':
-          convertedData = (await this.getData()).toString();
-          mimeType = 'text/plain';
-          break;
-        default:
-          throw new Error(`Unsupported extension: ${extension}`);
-      }
-    }
-    if (this.mimeType === 'text/html') {
-      switch (extension) {
-        case '.txt':
-          convertedData = (await this.getData()).toString();
-          mimeType = 'text/plain';
-          break;
-        default:
-          throw new Error(`Unsupported extension: ${extension}`);
-      }
-    }
-    if (this.mimeType === 'text/plain') {
-      switch (extension) {
-        case '.txt':
-          convertedData = (await this.getData()).toString();
-          mimeType = 'text/plain';
-          break;
-        default:
-          throw new Error(`Unsupported extension: ${extension}`);
-      }
-    }
-
-    if (this.mimeType === 'application/json') {
-      switch (extension) {
-        case '.txt':
-          convertedData = (await this.getData()).toString();
-          mimeType = 'text/plain';
-          break;
-        default:
-          throw new Error(`Unsupported extension: ${extension}`);
-      }
-    }
-    return { convertedData, mimeType };
-  }  
-  */
   describe('convertedData(extension)', () => {
     test('converts markdown to html', async () => {
       const fragment = new Fragment({
