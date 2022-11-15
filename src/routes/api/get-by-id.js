@@ -1,45 +1,37 @@
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
-const md = require('markdown-it')();
+
 module.exports = async (req, res) => {
-  // extract the fragment ID from the request
-  let id = req.params.id;
-  let ext = id.split('.').pop();
-  id = id.split('.').shift();
-  // Supported Content-Types
-  const contentType =
-    ext === 'txt'
-      ? 'text/plain'
-      : ext === 'md'
-      ? 'text/markdown'
-      : ext === 'html'
-      ? 'text/html'
-      : ext === 'json'
-      ? 'application/json'
-      : '';
+  const id = req.params.id;
+  const ext = id.indexOf('.') > -1 ? id.substring(id.lastIndexOf('.')) : '';
+  const fragmentId = id.substring(0, id.length - ext.length);
 
-  logger.debug(`GET /api/fragment/${id} (contentType=${contentType})`);
-  logger.debug(`ID IS ${req.user}, params are ${JSON.stringify(id)}`);
   try {
-    const fragment = await Fragment.byId(req.user, id);
-    const fragmentData = await fragment.getData();
+    const fragment = await Fragment.byId(req.user, fragmentId);
 
-    if (contentType) {
-      let type = md.render(fragmentData.toString());
-      res.status(200).setHeader('Content-Type', contentType).send(type);
-    } else {
-      res.set('Content-Type', fragment.type);
-      res.status(200).send(fragmentData);
-      logger.info(
-        createSuccessResponse({
-          fragment: fragmentData,
-          contentType: fragment.type,
-        })
-      );
+    switch (ext) {
+      // Extension not specified, return the default format (text/plain)
+      case '': {
+        const rawData = await fragment.getData();
+        res.set('Content-Type', fragment.type);
+        return res.status(200).send(rawData);
+      }
+
+      default: {
+        // extension specified, proceed to convert to the specified format
+        const { convertedData, mimeType } = await fragment.convertor(ext);
+        if (!fragment.formats.includes(ext))
+          return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
+
+        logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
+        res.set('Content-Type', mimeType);
+        res.setHeader('content-length', fragment.size);
+        return res.status(200).send(convertedData);
+      }
     }
   } catch (error) {
-    res.status(404).json(createErrorResponse(404, error.message));
-    logger.error('Fragment not found: ' + error);
+    logger.error(error);
+    return res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
   }
 };

@@ -4,6 +4,7 @@ const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 
+const md = require('markdown-it')();
 // Functions for working with fragment metadata/data using our DB
 const {
   readFragment,
@@ -14,23 +15,7 @@ const {
   deleteFragment,
 } = require('./data');
 
-const validTypes = [
-  `text/plain`,
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
-  */
-];
+const validTypes = ['text/plain', 'text/markdown', 'text/html', 'application/json'];
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
@@ -125,21 +110,18 @@ class Fragment {
    * @returns {boolean} true if fragment's type is text/*
    */
   get isText() {
-    const textRegexp = /^text\/plain(; charset=utf-8)?$/;
-    return textRegexp.test(this.type);
+    return this.mimeType.startsWith('text/') ? true : false;
   }
-
   /**
-   * Returns the formats into which this fragment type can be converted
-   * @returns {Array<string>} list of supported mime types
+   * Returns the fragment's data as a string (e.g., for text/* types)
+   * @returns {string} fragment's data as a string
    */
   get formats() {
-    //return validTypes.filter((type) => type.startsWith(this.mimeType));
-    if (this.type === 'text/plain') return 'text/plain';
-    else if (this.type === 'text/markdown') return 'text/markdown';
-    else if (this.type === 'text/html') return 'text/html';
-    else if (this.type === 'application/json') return 'application/json';
-    else return '';
+    if (this.mimeType === 'text/plain') return ['.txt'];
+    if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
+    if (this.mimeType === 'text/html') return ['.html', '.txt'];
+    if (this.mimeType === 'application/json') return ['.json', '.txt'];
+    return [];
   }
 
   /**
@@ -148,7 +130,68 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    return validTypes.includes(contentType.parse(value).type);
+    const { type } = contentType.parse(value);
+    return validTypes.includes(type);
+  }
+
+  /**
+   *
+   * @param {string} extension file extension (e.g., '.md') that has specified in the URL id:.ext
+   * @returns {string} the Content-Type value for the given extension (e.g., 'text/markdown') and the converted data
+   * @throws {Error} if the extension is not supported
+   * @throws {Error} if the fragment's data cannot be converted to the given extension
+   */
+  async convertor(extension) {
+    let mimeType, convertedData;
+
+    if (this.mimeType === 'text/markdown') {
+      switch (extension) {
+        case '.html': {
+          const rawData = await this.getData();
+          convertedData = md.render(rawData.toString());
+          mimeType = 'text/html';
+          break;
+        }
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+    if (this.mimeType === 'text/html') {
+      switch (extension) {
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+    if (this.mimeType === 'text/plain') {
+      switch (extension) {
+        case '.txt':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+
+    if (this.mimeType === 'application/json') {
+      switch (extension) {
+        case '.txt':
+          convertedData = JSON.stringify(await this.getData(), null, 2);
+          mimeType = 'text/plain';
+          break;
+        default:
+          throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+    return { convertedData, mimeType };
   }
 }
 
