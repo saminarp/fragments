@@ -13,7 +13,8 @@ module.exports = async (req, res) => {
     await fragment.save();
     await fragment.setData(req.body);
     logger.info(`Created fragment data for user ${req.user}`, { fragment });
-    res.set('Location', `${API_URL}/v1/fragments/${fragment.id}`);
+    res.location(API_URL + '/v1/fragments/' + fragment.id);
+
     res.status(201).json(createSuccessResponse({ fragment }));
   } catch (error) {
     logger.error('Fragment cannot be created due to ' + error);

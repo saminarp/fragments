@@ -23,7 +23,8 @@ module.exports = async (req, res) => {
         const { convertedData, mimeType } = await fragment.convertedData(ext);
 
         logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
-        res.set('Content-Type', mimeType);
+        //res.set('Content-Type', mimeType);
+        res.type(mimeType);
         res.setHeader('content-length', fragment.size);
         return res.status(200).send(convertedData);
       }
