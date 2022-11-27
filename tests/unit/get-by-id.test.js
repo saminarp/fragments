@@ -31,6 +31,6 @@ describe('GET route tests for id:.:ext', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('new fragment');
-    expect(getReq.status).toBe(415);
+    expect(getReq.status).toBe(404);
   });
 });

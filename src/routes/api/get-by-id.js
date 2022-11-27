@@ -31,6 +31,6 @@ module.exports = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
+    return res.status(404).json(createErrorResponse(415, 'Unsupported Media Type'));
   }
 };
