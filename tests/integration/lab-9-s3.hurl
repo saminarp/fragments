@@ -27,7 +27,7 @@ body == "Hello S3!"
 
 
 DELETE {{url}}
-[Options]
+
 # Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1

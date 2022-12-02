@@ -156,16 +156,6 @@ describe('Fragment class', () => {
     });
   });
 
-  /* 
-  get formats() {
-    if (this.mimeType === 'text/plain') return ['.txt'];
-    if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
-    if (this.mimeType === 'text/html') return ['.html', '.txt'];
-    if (this.mimeType === 'application/json') return ['.json', '.txt'];
-    return [];
-  }  
-  */
-
   describe('formats', () => {
     test('formats returns expected results', () => {
       // Text fragment
