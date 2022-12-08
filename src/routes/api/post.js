@@ -8,9 +8,13 @@ module.exports = async (req, res) => {
     return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
 
   try {
-    const fragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });
+    const size = Buffer.byteLength(req.body);
+    const type = req.get('Content-Type');
+    const fragment = new Fragment({ ownerId: req.user, type: type, size: size });
+
     await fragment.save();
     await fragment.setData(req.body);
+
     logger.info(`Created fragment data for user ${req.user}`, { fragment });
     res.location(API_URL + '/v1/fragments/' + fragment.id);
 
