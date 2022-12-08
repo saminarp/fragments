@@ -4,9 +4,9 @@ const logger = require('../../logger');
 const API_URL = process.env.API_URL || 'http://localhost:8080';
 
 module.exports = async (req, res) => {
-  if (!Buffer.isBuffer(req.body))
+  if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
     return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
-
+  }
   try {
     const size = Buffer.byteLength(req.body);
     const type = req.get('Content-Type');
