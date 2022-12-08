@@ -632,6 +632,18 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
       expect(convertedData).toBeInstanceOf(Buffer);
     });
 
+    // test unsupported conversion for image
+    test('throws error if conversion is not supported', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/gif',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/gifTest.gif'));
+      expect(() => fragment.convertedData('.mp4')).rejects.toThrow();
+    });
+
     //test throws error if extension is not supported
     test('throws error if extension is not supported', async () => {
       const fragment = new Fragment({
