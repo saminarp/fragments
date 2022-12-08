@@ -103,17 +103,12 @@ class Fragment {
    * @returns Promise
    */
   async setData(data) {
-    if (!Buffer.isBuffer(data)) {
-      throw new Error('Received data is not a Buffer object');
-    } else {
-      this.size = Buffer.byteLength(data);
-      this.save();
-      try {
-        return await writeFragmentData(this.ownerId, this.id, data);
-      } catch (err) {
-        throw new Error('unable to set fragment data');
-      }
+    if (!data) {
+      throw new Error('Data is missing');
     }
+    this.size = Buffer.byteLength(data);
+    await this.save();
+    return writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
