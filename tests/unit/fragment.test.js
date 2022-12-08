@@ -1,4 +1,5 @@
 const { Fragment } = require('../../src/model/fragment');
+const fs = require('fs');
 
 // Wait for a certain number of ms. Returns a Promise.
 const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -345,6 +346,153 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
       expect(convertedData).toBe('{"a":1}');
       expect(mimeType).toBe('text/plain');
       expect(() => fragment.convertedData('.html')).rejects.toThrow();
+    });
+
+    /* ========  PNG IMAGE FILE CONVERSIONS ======== */
+    test('converts png to jpg', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/png',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/pngTest.png'));
+      const { convertedData, mimeType } = await fragment.convertedData('.jpg');
+      expect(mimeType).toBe('image/jpeg');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts png to jpeg', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/png',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/pngTest.png'));
+      const { convertedData, mimeType } = await fragment.convertedData('.jpeg');
+      expect(mimeType).toBe('image/jpeg');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts png to webp', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/png',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/pngTest.png'));
+      const { convertedData, mimeType } = await fragment.convertedData('.webp');
+      expect(mimeType).toBe('image/webp');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts png to gif', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/png',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/pngTest.png'));
+      const { convertedData, mimeType } = await fragment.convertedData('.gif');
+      expect(mimeType).toBe('image/gif');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    /* ========  JPEG IMAGE FILE CONVERSIONS ========  */
+    test('converts jpeg to png', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/jpeg',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/jpegTest.jpeg'));
+      const { convertedData, mimeType } = await fragment.convertedData('.png');
+      expect(mimeType).toBe('image/png');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts jpeg to webp', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/jpeg',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/jpegTest.jpeg'));
+      const { convertedData, mimeType } = await fragment.convertedData('.webp');
+      expect(mimeType).toBe('image/webp');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts jpeg to gif', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/jpeg',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/jpegTest.jpeg'));
+      const { convertedData, mimeType } = await fragment.convertedData('.gif');
+      expect(mimeType).toBe('image/gif');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    /* ========  WEBP IMAGE FILE CONVERSIONS ========  */
+    test('converts webp to png', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/webp',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/webpTest.webp'));
+      const { convertedData, mimeType } = await fragment.convertedData('.png');
+      expect(mimeType).toBe('image/png');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts webp to jpeg', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/webp',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/webpTest.webp'));
+      const { convertedData, mimeType } = await fragment.convertedData('.jpeg');
+      expect(mimeType).toBe('image/jpeg');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts webp to jpg', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/webp',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/webpTest.webp'));
+      const { convertedData, mimeType } = await fragment.convertedData('.jpg');
+      expect(mimeType).toBe('image/jpeg');
+      expect(convertedData).toBeInstanceOf(Buffer);
+    });
+
+    test('converts webp to gif', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/webp',
+        size: 0,
+      });
+
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/webpTest.webp'));
+      const { convertedData, mimeType } = await fragment.convertedData('.gif');
+      expect(mimeType).toBe('image/gif');
+      expect(convertedData).toBeInstanceOf(Buffer);
     });
 
     //test throws error if extension is not supported
