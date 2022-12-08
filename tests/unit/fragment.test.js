@@ -8,18 +8,20 @@ const validTypes = [
   `text/markdown`,
   `text/html`,
   `application/json`,
-  /*
   `image/png`,
   `image/jpeg`,
   `image/webp`,
   `image/gif`,
-  */
 ];
 
 describe('Fragment class', () => {
   test('common formats are supported', () => {
     validTypes.forEach((format) => expect(Fragment.isSupportedType(format)).toBe(true));
   });
+  /* 
+else if (!validTypes.some((validType) => type.includes(validType))) {
+      throw new Error('type not supported');  
+  */
 
   describe('Fragment()', () => {
     test('ownerId and type are required', () => {
@@ -186,6 +188,8 @@ describe('Fragment class', () => {
         size: 0,
       });
       expect(fragment4.formats).toEqual(['.json', '.txt']);
+
+      // image png
     });
   });
 
@@ -313,7 +317,6 @@ describe('Fragment class', () => {
       const { convertedData, mimeType } = await fragment.convertedData('.txt');
       expect(convertedData).toBe('<h1>Hello</h1>');
       expect(mimeType).toBe('text/plain');
-      expect(() => fragment.convertedData('.html')).rejects.toThrow();
     });
 
     test('converts txt to text', async () => {

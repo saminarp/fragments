@@ -3,6 +3,7 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+const sharp = require('sharp');
 
 const md = require('markdown-it')();
 // Functions for working with fragment metadata/data using our DB
@@ -15,8 +16,16 @@ const {
   deleteFragment,
 } = require('./data');
 
-const validTypes = ['text/plain', 'text/markdown', 'text/html', 'application/json'];
-
+const validTypes = [
+  'text/plain',
+  'text/markdown',
+  'text/html',
+  'application/json',
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
+];
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     if (!ownerId || !type) {
@@ -43,8 +52,9 @@ class Fragment {
    */
   static async byUser(ownerId, expand = false) {
     const ids = await listFragments(ownerId);
-    if (expand) return Promise.all(ids.map((id) => Fragment.byId(ownerId, id)));
-    else return ids;
+    if (expand) {
+      return Promise.all(ids.map((id) => Fragment.byId(ownerId, id)));
+    } else return ids;
   }
 
   /**
@@ -54,7 +64,11 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    return new Fragment(await readFragment(ownerId, id));
+    const result = await readFragment(ownerId, id);
+    if (!result) {
+      throw new Error(`Fragment with id: ${id} for user: ${ownerId} not found.`);
+    }
+    return new Fragment(result);
   }
 
   /**
@@ -71,17 +85,16 @@ class Fragment {
    * Saves the current fragment to the database
    * @returns Promise
    */
-  save() {
+  async save() {
     this.updated = new Date().toISOString();
-    return writeFragment(this);
+    return await writeFragment(this);
   }
-
   /**
    * Gets the fragment's data from the database
    * @returns Promise<Buffer>
    */
-  getData() {
-    return readFragmentData(this.ownerId, this.id);
+  async getData() {
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -90,9 +103,17 @@ class Fragment {
    * @returns Promise
    */
   async setData(data) {
-    this.size = data.length;
-    await writeFragmentData(this.ownerId, this.id, data);
-    return this.save();
+    if (!Buffer.isBuffer(data)) {
+      throw new Error('Received data is not a Buffer object');
+    } else {
+      this.size = Buffer.byteLength(data);
+      this.save();
+      try {
+        return await writeFragmentData(this.ownerId, this.id, data);
+      } catch (err) {
+        throw new Error('unable to set fragment data');
+      }
+    }
   }
 
   /**
@@ -121,6 +142,11 @@ class Fragment {
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
     if (this.mimeType === 'application/json') return ['.json', '.txt'];
+    if (this.mimeType === 'image/png') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    if (this.mimeType === 'image/jpeg') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    if (this.mimeType === 'image/webp') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    if (this.mimeType === 'image/gif') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+
     return [];
   }
 
@@ -145,6 +171,10 @@ class Fragment {
     let mimeType, convertedData;
 
     if (this.mimeType === 'text/markdown') {
+      // The text/markdown type supports conversion of
+      // .md -> .html
+      // .md -> .txt
+      // .md -> .md
       switch (extension) {
         case '.html': {
           const rawData = await this.getData();
@@ -152,25 +182,40 @@ class Fragment {
           mimeType = 'text/html';
           break;
         }
-        case '.txt':
+        case '.txt': {
           convertedData = (await this.getData()).toString();
           mimeType = 'text/plain';
           break;
+        }
+        case '.md': {
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/markdown';
+          break;
+        }
         default:
           throw new Error(`Unsupported extension: ${extension}`);
       }
     }
     if (this.mimeType === 'text/html') {
+      // The text/html type supports conversion of
+      // .html -> .txt
+      // .html -> .html
       switch (extension) {
         case '.txt':
           convertedData = (await this.getData()).toString();
           mimeType = 'text/plain';
+          break;
+        case '.html':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'text/html';
           break;
         default:
           throw new Error(`Unsupported extension: ${extension}`);
       }
     }
     if (this.mimeType === 'text/plain') {
+      // The text/plain type supports conversion of
+      // .txt -> .txt
       switch (extension) {
         case '.txt':
           convertedData = (await this.getData()).toString();
@@ -182,15 +227,50 @@ class Fragment {
     }
 
     if (this.mimeType === 'application/json') {
+      // The application/json type supports conversion of
+      // .json -> .txt
+      // .json -> .json
       switch (extension) {
         case '.txt':
           convertedData = (await this.getData()).toString();
           mimeType = 'text/plain';
           break;
+        case '.json':
+          convertedData = (await this.getData()).toString();
+          mimeType = 'application/json';
+          break;
         default:
           throw new Error(`Unsupported extension: ${extension}`);
       }
     }
+
+    if (
+      this.mimeType === 'image/png' ||
+      this.mimeType === 'image/jpeg' ||
+      this.mimeType === 'image/webp' ||
+      this.mimeType === 'image/gif'
+    ) {
+      if (extension === '.png') {
+        const rawData = await this.getData();
+        convertedData = await sharp(rawData).toFormat('png').toBuffer();
+        mimeType = 'image/png';
+      } else if (extension === '.jpg' || extension === '.jpeg') {
+        const rawData2 = await this.getData();
+        convertedData = await sharp(rawData2).toFormat('jpeg').toBuffer();
+        mimeType = 'image/jpeg';
+      } else if (extension === '.webp') {
+        const rawData3 = await this.getData();
+        convertedData = await sharp(rawData3).toFormat('webp').toBuffer();
+        mimeType = 'image/webp';
+      } else if (extension === '.gif') {
+        const rawData4 = await this.getData();
+        convertedData = await sharp(rawData4).toFormat('gif').toBuffer();
+        mimeType = 'image/gif';
+      } else {
+        throw new Error(`Unsupported extension: ${extension}`);
+      }
+    }
+
     return { convertedData, mimeType };
   }
 }
