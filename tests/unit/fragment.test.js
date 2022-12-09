@@ -167,28 +167,28 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
         type: 'text/plain; charset=utf-8',
         size: 0,
       });
-      expect(fragment.formats).toEqual(['.txt']);
+      expect(fragment.validExtensions).toEqual(['.txt']);
 
       const fragment2 = new Fragment({
         ownerId: '1234',
         type: 'text/markdown; charset=utf-8',
         size: 0,
       });
-      expect(fragment2.formats).toEqual(['.md', '.html', '.txt']);
+      expect(fragment2.validExtensions).toEqual(['.md', '.html', '.txt']);
 
       const fragment3 = new Fragment({
         ownerId: '1234',
         type: 'text/html; charset=utf-8',
         size: 0,
       });
-      expect(fragment3.formats).toEqual(['.html', '.txt']);
+      expect(fragment3.validExtensions).toEqual(['.html', '.txt']);
 
       const fragment4 = new Fragment({
         ownerId: '1234',
         type: 'application/json; charset=utf-8',
         size: 0,
       });
-      expect(fragment4.formats).toEqual(['.json', '.txt']);
+      expect(fragment4.validExtensions).toEqual(['.json', '.txt']);
 
       // image png
       const fragment5 = new Fragment({
@@ -196,7 +196,7 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
         type: 'image/png',
         size: 0,
       });
-      expect(fragment5.formats).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
+      expect(fragment5.validExtensions).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
 
       // image jpeg
       const fragment6 = new Fragment({
@@ -204,7 +204,7 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
         type: 'image/jpeg',
         size: 0,
       });
-      expect(fragment6.formats).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
+      expect(fragment6.validExtensions).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
 
       // image gif
       const fragment7 = new Fragment({
@@ -212,7 +212,7 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
         type: 'image/gif',
         size: 0,
       });
-      expect(fragment7.formats).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
+      expect(fragment7.validExtensions).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
 
       // image webp
       const fragment8 = new Fragment({
@@ -220,7 +220,7 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
         type: 'image/webp',
         size: 0,
       });
-      expect(fragment8.formats).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
+      expect(fragment8.validExtensions).toEqual(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
     });
   });
 

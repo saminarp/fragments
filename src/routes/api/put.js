@@ -1,42 +1,41 @@
+const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
-const { createSuccessResponse, createErrorResponse } = require('../../response');
 
 module.exports = async (req, res) => {
   try {
-    const oldFragment = await Fragment.byId(req.user, req.params.id);
-
-    if (req.get('Content-Type') !== oldFragment.type) {
-      logger.error('Exited with Bad Request - Content-Type does not match existing fragment type');
-      return res.status(400).json(createErrorResponse(400, 'Bad Request'));
+    const fragment = await Fragment.byId(req.user, req.params.id);
+    if (req.get('Content-Type') !== fragment.type) {
+      logger.warn(
+        "Error - Bad Request: Content-Type of the request does not match the existing fragment's type"
+      );
+      return res
+        .status(400)
+        .json(
+          createErrorResponse(
+            400,
+            "Content-Type of the request must match the existing fragment's type"
+          )
+        );
     }
 
-    const newFragment = new Fragment({
-      ownerId: req.user,
-      id: req.params.id,
-      created: oldFragment.created,
-      updated: new Date().toISOString(),
-      type: req.get('Content-Type'),
-    });
+    await fragment.setData(req.body);
+    await fragment.save();
 
-    await newFragment.save();
-    await newFragment.setData(req.body);
-
-    newFragment.toJSON = () => {
+    fragment.toJSON = () => {
       return {
-        id: newFragment.id,
-        created: oldFragment.created, // created time (unchanged)
-        updated: newFragment.updated, // updated time
-        size: newFragment.size,
-        type: oldFragment.type,
-        formats: [newFragment.type], // array of fragment types
+        id: fragment.id,
+        created: fragment.created,
+        updated: fragment.updated,
+        size: fragment.size,
+        type: fragment.type,
+        // formats function is returning an array of accepted content types
+        formats: fragment.formats,
       };
     };
-
-    res.status(200).json(createSuccessResponse({ newFragment: newFragment }));
+    res.status(200).json(createSuccessResponse({ fragment: fragment }));
   } catch (err) {
-    logger.error({ err }, 'Error getting fragment by id');
-
-    res.status(404).json(createErrorResponse(404, 'Error getting fragment information'));
+    logger.error({ err }, 'Error getting fragment by id at PUT request');
+    res.status(404).json(createErrorResponse(404, 'Error getting fragment id'));
   }
 };
