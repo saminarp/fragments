@@ -1,6 +1,6 @@
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
-const { createSuccessResponse, createErrorResponse } = require('../../response');
+const { createErrorResponse } = require('../../response');
 
 module.exports = async (req, res) => {
   const id = req.params.id;
@@ -22,7 +22,6 @@ module.exports = async (req, res) => {
         // extension specified, proceed to convert to the specified format
         const { convertedData, mimeType } = await fragment.convertedData(ext);
 
-        logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
         //res.set('Content-Type', mimeType);
         res.type(mimeType);
         res.setHeader('content-length', fragment.size);

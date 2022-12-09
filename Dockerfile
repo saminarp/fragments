@@ -20,7 +20,8 @@ WORKDIR /app
 COPY --chown=node:node package.json package-lock.json /app/
 
 # Install dependencies for production
-RUN npm ci --only=production 
+RUN npm ci --only=production \
+    && npm install sharp@0.30.7
 ################################################
 
 # Stage 2 - the production environment
