@@ -4,6 +4,15 @@
 
 [Microservices](https://aws.amazon.com/microservices/) are a software architectural approach where software is made up of small independently working services and communicating through APIs. Each microservice focuses on solving a specific problem and can be developed, deployed, operated and scaled without affecting other services.
 
+A fragment is defined as any piece of text (e.g., `text/plain`, `text/markdown`, `text/html`, etc.), JSON data (`application/json`), or an image in any of the following formats:
+
+| Name       | Type         | Extension |
+| ---------- | ------------ | --------- |
+| PNG Image  | `image/png`  | `.png`    |
+| JPEG Image | `image/jpeg` | `.jpg`    |
+| WebP Image | `image/webp` | `.webp`   |
+| GIF Image  | `image/gif`  | `.gif`    |
+
 ## Environment Variables and testing
 
 You can set the environment variables in the `.env` file.\
@@ -35,7 +44,9 @@ cd fragments && npm run dev
 
 Youy can run the tests by running `npm run test`:
 
-> **Note:** `npm run test` will run the tests in the `tests/unit` folder which was written using [Jest](https://jestjs.io/docs/en/getting-started). and supertest. If you run the command `npm run test:integration` it will run the tests in the `tests/integration` folder which was written using [hurl](https://hurl.dev/docs/installation.html). Difference between unit and integration tests is that unit tests are testing the code in isolation and integration tests are testing the code in the context of the whole application.
+> **Note:** `npm run test` will run the tests in the `tests/unit` folder which was written using [Jest](https://jestjs.io/docs/en/getting-started). and supertest. If you run the command `npm run test:integration` it will run the tests in the `tests/integration` folder which was written using [hurl](https://hurl.dev/docs/installation.html).
+
+Difference between unit and integration tests is that unit tests are testing the code in isolation and integration tests are testing the code in the context of the whole application.
 
 ### Dockerfile and Docker Compose for local development and testing
 
@@ -54,6 +65,7 @@ f4cf9fdca845   amazon/dynamodb-local   "java -jar DynamoDBL…"   45 seconds ago
 
 After making sure that the containers are running, you should run the script file `./scripts/local-aws-setup.sh` to create the necessary resources in localstack and dynamodb-local (S3 Bucket and DynamoDB table). Give permission to the script file by running `chmod +x ./scripts/local-aws-setup.sh` and then run the script file by running `./scripts/local-aws-setup.sh`.
 
+Note that this script uses the AWS CLI to create the resources in localstack and dynamodb-local. You can install the AWS CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 After running the script file, you can run the tests by running `npm run test:integration`:
 
 ```bash
