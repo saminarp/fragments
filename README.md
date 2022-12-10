@@ -15,8 +15,7 @@ A fragment is defined as any piece of text (e.g., `text/plain`, `text/markdown`,
 
 ## Environment Variables and testing
 
-You can set the environment variables in the `.env` file.\
-The `.env` file is not tracked by git, so you can set the environment variables in the `.env` file it should look like this;
+You can set the environment variables in the `.env` file. The `.env` file is not tracked by git, so you can set the environment variables in the `.env` file it should look like this;
 
 ```bash
 # port to use when starting the server
@@ -34,9 +33,8 @@ API_URL=http://localhost:8080
 HTPASSWD_FILE="tests/.htpasswd"
 ```
 
-The AWS* credentials are not needed for local development. Since we are using Basic Auth for local development, the `HTPASSWD_FILE` is needed to be set. If you want to use the AWS* credentials, you need to create a User Pool and a Client App in AWS Cognito and set it like in the example shown.
-
-After properly setting the environment variables, you can run the local development server by running `npm run dev`:
+The AWS* credentials are not needed for local development. Since we are using Basic Auth for local development, the `HTPASSWD_FILE` is needed to be set. If you want to use the AWS* credentials, you need to create a User Pool and a Client App in AWS Cognito and set it like in the example shown. After properly setting the environment variables,\
+ you can run the local development server by running `npm run dev`:
 
 ```bash
 cd fragments && npm run dev
@@ -65,7 +63,8 @@ f4cf9fdca845   amazon/dynamodb-local   "java -jar DynamoDBL…"   45 seconds ago
 
 After making sure that the containers are running, you should run the script file `./scripts/local-aws-setup.sh` to create the necessary resources in localstack and dynamodb-local (S3 Bucket and DynamoDB table). Give permission to the script file by running `chmod +x ./scripts/local-aws-setup.sh` and then run the script file by running `./scripts/local-aws-setup.sh`.
 
-Note that this script uses the AWS CLI to create the resources in localstack and dynamodb-local. You can install the AWS CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+Note that this script uses the AWS CLI to create the resources in localstack and dynamodb-local. \
+You can install the AWS CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 After running the script file, you can run the tests by running `npm run test:integration`:
 
 ```bash
@@ -74,7 +73,8 @@ cd fragments && npm run test:integration
 
 ### Curl commands for testing the server endpoints
 
-Regardless of the way you run the server (using docker-compose or development mode), you can use the following curl commands to test the endpoints. These curl commands lets you manage create, read, update and delete fragments.
+Regardless of the way you run the server (using docker-compose or development mode), you can use the following curl commands to test the endpoints.
+These curl commands lets you manage create, read, update and delete fragments.
 
 ### GET
 
@@ -125,7 +125,8 @@ curl -i -X DELETE -u user1@email.com:password1 \
 
 ### ESLint & Prettier
 
-[ESLint](https://eslint.org/docs/latest/user-guide/getting-started) and [Prettier](https://prettier.io/docs/en/options.html) is a development dependency which is not needed in production. These tools allow the code to be more consistent and helps in avoiding bugs by following patterns in ECMAScript/JavaScript code. Note: To configure format on save mode make sure you have the `.prettierrc` file.
+[ESLint](https://eslint.org/docs/latest/user-guide/getting-started) and [Prettier](https://prettier.io/docs/en/options.html) is a development dependency which is not needed in production. These tools allow the code to be more consistent and helps in avoiding bugs by following patterns in ECMAScript/JavaScript code.
+Note: To configure format on save mode make sure you have the `.prettierrc` file.
 
 ```bash
 npm run lint # for running lint
@@ -133,8 +134,7 @@ npm run lint # for running lint
 
 ### node-inspector
 
-To debug node script `npm run debug` uses the `--inspect` command.\
-Node needs an attacher to run --inspect, configure this by clicking on the button `Auto Attach`.
+To debug node script `npm run debug` uses the `--inspect` command. Node needs an attacher to run --inspect, configure this by clicking on the button `Auto Attach`.
 Choose the option `with-flag`, this means, whenever you run the npm run debug it will recognize the flag and listen for node debugger.
 
 ### helmet
