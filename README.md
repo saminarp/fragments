@@ -62,7 +62,7 @@ cd fragments && npm run test:integration
 
 ### Curl commands for testing the server endpoints
 
-Regardless of the way you run the server (using docker-compose or development mode), you can use the following curl commands to test the endpoints
+Regardless of the way you run the server (using docker-compose or development mode), you can use the following curl commands to test the endpoints. These curl commands lets you manage create, read, update and delete fragments.
 
 ### GET
 
