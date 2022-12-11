@@ -16,7 +16,7 @@ const validTypes = [
 ];
 
 describe('Fragment class', () => {
-  test('common formats are supported', () => {
+  test('common validExtensions are supported', () => {
     validTypes.forEach((format) => expect(Fragment.isSupportedType(format)).toBe(true));
   });
   /* 
@@ -159,8 +159,8 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
     });
   });
 
-  describe('formats', () => {
-    test('formats returns expected results', () => {
+  describe('validExtensions', () => {
+    test('validExtensions returns expected results', () => {
       // Text fragment
       const fragment = new Fragment({
         ownerId: '1234',
@@ -654,6 +654,139 @@ else if (!validTypes.some((validType) => type.includes(validType))) {
       await fragment.save();
       await fragment.setData(Buffer.from('# Hello'));
       expect(() => fragment.convertedData('.jpg')).rejects.toThrow();
+    });
+  });
+  /* 
+  get formats() {
+    const mimeTypes = {
+      'text/plain': ['text/plain'],
+      'text/markdown': ['text/markdown', 'text/html', 'text/plain'],
+      'text/html': ['text/html', 'text/plain'],
+      'application/json': ['application/json', 'text/plain'],
+      'image/png': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/jpeg': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/webp': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/gif': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+    };
+
+    let supportedFormats;
+    switch (this.mimeType) {
+      case 'text/plain':
+        supportedFormats = mimeTypes['text/plain'];
+        break;
+      case 'text/markdown':
+        supportedFormats = mimeTypes['text/markdown'];
+        break;
+      case 'text/html':
+        supportedFormats = mimeTypes['text/html'];
+        break;
+      case 'application/json':
+        supportedFormats = mimeTypes['application/json'];
+        break;
+      case 'image/png':
+        supportedFormats = mimeTypes['image/png'];
+        break;
+      case 'image/jpeg':
+        supportedFormats = mimeTypes['image/jpeg'];
+        break;
+      case 'image/webp':
+        supportedFormats = mimeTypes['image/webp'];
+        break;
+      case 'image/gif':
+        supportedFormats = mimeTypes['image/gif'];
+        break;
+    }
+    return supportedFormats;
+  }  
+  */
+  describe('formats returns supported formats', () => {
+    // test all cases
+    test('returns supported formats for text/plain', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/plain',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('Hello'));
+      expect(fragment.formats).toEqual(['text/plain']);
+    });
+
+    test('returns supported formats for text/markdown', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# Hello'));
+      expect(fragment.formats).toEqual(['text/markdown', 'text/html', 'text/plain']);
+    });
+
+    test('returns supported formats for text/html', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/html',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('<h1>Hello</h1>'));
+      expect(fragment.formats).toEqual(['text/html', 'text/plain']);
+    });
+
+    test('returns supported formats for application/json', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'application/json',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(Buffer.from('{"hello": "world"}'));
+      expect(fragment.formats).toEqual(['application/json', 'text/plain']);
+    });
+
+    test('returns supported formats for image/png', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/png',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/pngTest.png'));
+      expect(fragment.formats).toEqual(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+    });
+
+    test('returns supported formats for image/jpeg', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/jpeg',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/jpegTest.jpeg'));
+      expect(fragment.formats).toEqual(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+    });
+
+    test('returns supported formats for image/webp', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/webp',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/webpTest.webp'));
+      expect(fragment.formats).toEqual(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+    });
+
+    test('returns supported formats for image/gif', async () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/gif',
+        size: 0,
+      });
+      await fragment.save();
+      await fragment.setData(fs.readFileSync('tests/images/gifTest.gif'));
+      expect(fragment.formats).toEqual(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
     });
   });
 });
