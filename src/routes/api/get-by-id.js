@@ -1,11 +1,11 @@
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const { createErrorResponse } = require('../../response');
+const path = require('path');
 
 module.exports = async (req, res) => {
-  const id = req.params.id;
-  const ext = id.indexOf('.') > -1 ? id.substring(id.lastIndexOf('.')) : '';
-  const fragmentId = id.substring(0, id.length - ext.length);
+  const ext = path.extname(req.params.id);
+  const fragmentId = path.basename(req.params.id, ext);
 
   try {
     const fragment = await Fragment.byId(req.user, fragmentId);
